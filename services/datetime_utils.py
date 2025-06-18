@@ -10,10 +10,13 @@ def parse_datetime(iso_date: str) -> datetime:
         return None
         
     try:
-        dt = datetime.fromisoformat(iso_date.replace("Z", "+00:00"))
-        return dt.astimezone(timezone.utc) if dt.tzinfo else dt
+        iso_date = iso_date.replace("Z", "+00:00")
+        if "." in iso_date:  
+            dt = datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%S.%f%z")
+        else:
+            dt = datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%S%z")
+        return dt
     except ValueError:
-        logger.warning(f"Invalid date format: {iso_date}")
         return None
 
 def format_datetime(dt: datetime) -> str:
